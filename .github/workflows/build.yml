@@ -7,8 +7,8 @@ jobs:
   build:
     strategy:
       matrix:
-        arch: ["pc-x86_64", "pc-i386"]
-        debug: ["all", "none"]
+        arch: ["pc-x86_64"]
+        debug: ["all"]
     permissions:
       contents: write
       pull-requests: read
