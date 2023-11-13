@@ -23,7 +23,7 @@ jobs:
           key: ${{ matrix.arch }}-${{ matrix.debug }}
     - name: Get current date
       id: date
-      run: echo "stamp=$(date +'+%s')" >> $GITHUB_ENV
+      run: echo "stamp=$(date '+%s')" >> $GITHUB_ENV
     - name: Install tools
       run: sudo apt -y install python-is-python3 python3-pip cdrecord gawk wget sed cmake autoconf automake build-essential libnetpbm10-dev netpbm python3-mako bison flex bzip2 libx11-dev libxext-dev libc6-dev liblzo2-dev libxxf86vm-dev libpng-dev libsdl1.2-dev byacc libxcursor-dev
     - name: Configure build
@@ -38,8 +38,8 @@ jobs:
       with:
         draft: true
         prerelease: false
-        release_name: AROS-${{ env.stamp }}
-        tag_name: ${{ env.stamp }}
+        release_name: AROS-${{ matrix.arch }}-debug_${{ matrix.debug }}
+        tag_name: ${{ matrix.arch }}-${{ matrix.debug }}-${{ env.stamp }}
       env:
         GITHUB_TOKEN: ${{ github.token }}
     - name: Upload artifacts to release draft
