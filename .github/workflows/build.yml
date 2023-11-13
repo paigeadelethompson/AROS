@@ -7,8 +7,8 @@ jobs:
   build:
     strategy:
       matrix:
-        arch: ["pc-x86_64"]
-        debug: ["all"]
+        arch: ["pc-x86_64", "pc-i386"]
+        debug: ["all", "none"]
     permissions:
       contents: write
       pull-requests: read
@@ -40,12 +40,12 @@ jobs:
         tag_name: ${{ env.stamp }}
       env:
         GITHUB_TOKEN: ${{ github.token }}
-    - name: Upload zipped image to release artifacts
+    - name: Upload artifacts to release draft
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ github.token }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: distfiles/aros-${{ matrix.arch }}.iso
-        asset_name: AROS-${{ matrix.arch }}.iso
+        asset_name: AROS-${{ matrix.arch }}-${{ matrix.debug }}.iso
         asset_content_type: application/zip
