@@ -1,0 +1,51 @@
+name: "Build AROS"
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        arch: ["pc-x86_64", "pc-i386"]
+        debug: ["all", "none"]
+    permissions:
+      contents: write
+      pull-requests: read
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: true
+    - name: Enable ccache
+      uses: hendrikmuhs/ccache-action@v1.2
+    - name: Get current date
+      id: date
+      run: echo "stamp=$(date +'+%s')" >> $GITHUB_ENV
+    - name: Install tools
+      run: sudo apt -y install python-is-python3 python3-pip cdrecord libnetpbm-dev gawk wget sed cmake autoconf automake git-core gcc g++ make cmake gawk bison flex bzip2 netpbm autoconf automake libx11-dev libxext-dev libc6-dev liblzo2-dev libxxf86vm-dev libpng-dev libsdl1.2-dev byacc python-mako libxcursor-dev
+    - name: Configure build
+      run: ./configure --target=${{ matrix.arch }} --enable-debug=${{ matrix.debug }} --enable-ccache --with-serial-debug=Y
+    - name: Build source
+      run: make
+    - name: Build distfiles (ISO)
+      run: make distfiles
+    - name: Create GH release
+      uses: actions/create-release@v1
+      id: create_release
+      with:
+        draft: true
+        prerelease: false
+        release_name: AROS-${{ matrix.arch }}
+        tag_name: ${{ env.stamp }}
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+    - name: Upload zipped image to release artifacts
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: distfiles/aros-${{ matrix.arch }}.iso
+        asset_name: AROS-${{ matrix.arch }}.iso
+        asset_content_type: application/zip

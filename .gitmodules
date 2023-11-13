@@ -1,0 +1,3 @@
+[submodule "AROS"]
+	path = AROS
+	url = https://github.com/aros-development-team/AROS.git
