@@ -7,7 +7,7 @@ jobs:
   build:
     strategy:
       matrix:
-        arch: ["pc-x86_64", "pc-i386"]
+        arch: ["pc-x86_64", "pc-i386", "arm-raspi"]
         debug: ["all", "none"]
     permissions:
       contents: write
